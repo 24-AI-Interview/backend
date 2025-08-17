@@ -44,15 +44,7 @@ AI 면접 준비를 위한 통합 플랫폼의 백엔드 레포지토리입니�
 
 ### ## 폴더 구조
 
-프로젝트는 역할에 따라 계층을 나누는 **계층형 아키텍처(Layered Architecture)**를 따릅니다.
 
-src/main/java/com/example/interviewhelper/
-├── config/         # Security, CORS 등 설정 파일
-├── controller/     # API의 엔드포인트, 외부 요청 처리
-├── service/        # 핵심 비즈니스 로직 처리
-├── repository/     # 데이터베이스 접근 및 쿼리
-├── entity/         # 데이터베이스 테이블과 매핑되는 객체
-└── dto/            # 각 계층 간 데이터 전송을 위한 객체
 
 ---
 

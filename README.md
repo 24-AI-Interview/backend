@@ -4,7 +4,7 @@ AI 면접 준비를 위한 통합 플랫폼의 백엔드 레포지토리입니�
 
 ---
 
-### ## 주요 기능 및 API
+## 주요 기능 및 API
 
 백엔드 서버는 아래와 같은 핵심 기능들을 API로 제공하여 프론트엔드와 통신합니다.
 
@@ -42,25 +42,41 @@ AI 면접 준비를 위한 통합 플랫폼의 백엔드 레포지토리입니�
 
 ---
 
-### ## 폴더 구조
+## 📂 폴더 구조
 
-
+interview/
+└── src
+    ├── main
+    │   ├── java 
+    │   │   └── com
+    │   │       └── example
+    │   │           └── interviewhelper
+    │   │               ├── InterviewHelperApplication.java  # 프로젝트 실행
+    │   │               ├── controller    
+    │   │               ├── service     
+    │   │               ├── repository  
+    │   │               ├── entity      
+    │   │               └── dto           
+    │   │
+    │   └── resources                  
+    │       └── application.yml         
+    │
+    └── test        
 
 ---
 
-### ## 시작하는 방법
+## 시작하는 방법
 
 프로젝트를 로컬 환경에서 실행하려면 아래 단계를 따라 주세요.
 
-#### **1. 사전 준비**
+1. 사전 준비
 * Java 17 (JDK) 설치
 * PostgreSQL (또는 다른 관계형 데이터베이스) 설치 및 실행
 
-#### **2. 프로젝트 설정**
+2. 프로젝트 설정
 ```bash
 # 레포지토리 클론
 git clone [https://github.com/your-github-id/backend.git](https://github.com/your-github-id/backend.git)
 cd backend
-
-
-### 추후 작성 예정
+```
+####나머지 추후 작성 예정

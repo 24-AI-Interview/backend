@@ -31,9 +31,9 @@ AI 면접 준비를 위한 통합 플랫폼의 백엔드 레포지토리입니�
 
 ---
 
-### ## 기술 스택 (Tech Stack)
+## 기술 스택 (Tech Stack)
 
-* **Framework**: Spring Boot 3.x
+* **Framework**: Spring Boot 3.5.4
 * **Language**: Java 17
 * **Database**: PostgreSQL (또는 MySQL)
 * **Data Access**: Spring Data JPA

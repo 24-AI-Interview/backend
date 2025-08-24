@@ -6,6 +6,7 @@ import com.example.interviewhelper.service.CoverLetterService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -22,6 +23,19 @@ public class CoverLetterController {
     public ResponseEntity<String> createCoverLetter(@PathVariable Long userId, @RequestBody CoverLetterRequestDto requestDto) {
         coverLetterService.createCoverLetter(userId, requestDto);
         return ResponseEntity.ok("자기소개서 작성");
+    }
+
+    @PostMapping("/analyze")
+    public ResponseEntity<String> analyzeCoverLetter(
+            @RequestParam("userId") Long userId,
+            @RequestParam("industry") String industry,
+            @RequestParam("job") String job,
+            @RequestParam(value = "text", required = false) String text,
+            @RequestParam(value = "savedId", required = false) Long savedId,
+            @RequestPart(value = "file", required = false) MultipartFile file) {
+
+        String result = coverLetterService.analyze(userId, industry, job, text, savedId, file);
+        return ResponseEntity.ok(result);
     }
 
     @GetMapping("/{userId}")

@@ -1,0 +1,26 @@
+# 서버 포트 설정
+server:
+  port: 8080
+
+# Spring Boot 핵심 설정
+spring:
+  # 데이터베이스 연결 설정
+  datasource:
+    url: jdbc:postgresql://localhost:5432/interview_db
+    username: your_username
+    password: your_password
+    driver-class-name: org.postgresql.Driver
+
+  # JPA (Java Persistence API) 및 Hibernate 설정
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+# (추가) 직접 관리하는 설정
+file:
+  # 파일 업로드 경로 설정
+  upload-dir: C:/interview_videos/ # <-- 4. 영상을 저장할 로컬 폴더 경로를 여기에 입력하세요.

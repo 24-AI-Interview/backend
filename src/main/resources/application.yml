@@ -4,6 +4,10 @@ server:
 
 # Spring Boot 핵심 설정
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
   # 데이터베이스 연결 설정
   datasource:
     url: jdbc:postgresql://localhost:5432/interview_db

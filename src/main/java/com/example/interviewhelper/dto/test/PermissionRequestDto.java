@@ -5,8 +5,8 @@ import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-public class TestStartRequestDto {
+public class PermissionRequestDto {
     private Long userId;
-    private String testType;    // 예: "BIG5"
-    // 'language', 'deviceInfo' 추가 가능
+    private boolean cameraAllowed;
+    private boolean micAllowed;
 }

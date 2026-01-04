@@ -1,6 +1,7 @@
 package com.example.interviewhelper.controller;
 
 import com.example.interviewhelper.dto.user.UserLoginRequestDto;
+import com.example.interviewhelper.dto.user.UserLoginResponseDto; // 여기 확인!
 import com.example.interviewhelper.dto.user.UserSignupRequestDto;
 import com.example.interviewhelper.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginRequestDto requestDto) {
-        String token = userService.login(requestDto);
-        return ResponseEntity.ok(token);
+    public ResponseEntity<UserLoginResponseDto> login(@RequestBody UserLoginRequestDto requestDto) {
+        UserLoginResponseDto response = userService.login(requestDto);
+        return ResponseEntity.ok(response);
     }
 }

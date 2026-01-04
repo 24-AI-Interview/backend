@@ -6,7 +6,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 public class TestSubmissionDto {
-    private Long testSessionId; // 현재 진행 중인 검사 세션 ID
-    private Long questionId;    // 답변하는 문항 ID
-    private String answer;      // 문항에 대한 답변 내용
+    private Long testSessionId;
+    private Long questionId;
+    private String answer;      // 텍스트 답변
+    private int selectedOption; // 선택한 번호 (예: 1~5점)
 }

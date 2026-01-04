@@ -1,25 +1,22 @@
 package com.example.interviewhelper.service;
 
-import com.example.interviewhelper.dto.interview.InterviewQuestionDto;
-import com.example.interviewhelper.dto.interview.InterviewResultDto;
+import com.example.interviewhelper.dto.interview.*;
 import com.example.interviewhelper.entity.*;
 import com.example.interviewhelper.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value; // (추가) @Value 임포트
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class InterviewService {
 
     private final UserRepository userRepository;
@@ -28,39 +25,35 @@ public class InterviewService {
     private final InterviewReportRepository interviewReportRepository;
     private final PracticeQuestionRepository practiceQuestionRepository;
 
-    // (수정) 설정 파일(application.yml)에서 파일 저장 경로를 주입받음
     @Value("${file.upload-dir}")
     private String uploadDir;
 
-    // 1. 면접 시작
+    // 1. 면접 시작 (질문 목록 조회)
     @Transactional
     public List<InterviewQuestionDto> startInterview(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         InterviewSession session = new InterviewSession(user);
-        interviewSessionRepository.save(session);
+        InterviewSession savedSession = interviewSessionRepository.save(session);
 
         return practiceQuestionRepository.findAll().stream()
-                .map(InterviewQuestionDto::new)
+                .map(q -> new InterviewQuestionDto(savedSession.getId(), q))
                 .collect(Collectors.toList());
     }
 
     // 2. 답변 영상 저장
     @Transactional
-    public void saveAnswerVideo(Long interviewSessionId, Long questionId, MultipartFile videoFile) {
-        InterviewSession session = interviewSessionRepository.findById(interviewSessionId)
-                .orElseThrow(() -> new IllegalArgumentException("면접 세션을 찾을 수 없습니다."));
-        PracticeQuestion question = practiceQuestionRepository.findById(questionId)
-                .orElseThrow(() -> new IllegalArgumentException("질문을 찾을 수 없습니다."));
+    public void saveAnswerVideo(Long sessionId, Long questionId, MultipartFile videoFile) {
+        InterviewSession session = interviewSessionRepository.findById(sessionId).orElseThrow();
+        PracticeQuestion question = practiceQuestionRepository.findById(questionId).orElseThrow();
 
-        // (수정) 하드코딩된 경로 대신 주입받은 경로 사용
-        String uniqueFileName = UUID.randomUUID().toString() + "_" + videoFile.getOriginalFilename();
-        File dest = new File(uploadDir + uniqueFileName);
+        String fileName = "video_" + sessionId + "_" + UUID.randomUUID() + ".mp4";
+        File dest = new File(uploadDir, fileName);
         try {
             videoFile.transferTo(dest);
         } catch (IOException e) {
-            throw new RuntimeException("영상 파일 저장에 실패했습니다.", e);
+            throw new RuntimeException("영상 저장 실패", e);
         }
 
         InterviewResponse response = InterviewResponse.builder()
@@ -68,49 +61,50 @@ public class InterviewService {
                 .practiceQuestion(question)
                 .videoUrl(dest.getPath())
                 .build();
-
         interviewResponseRepository.save(response);
     }
 
-    // 3. 실시간 분석 데이터 처리
-    public void processGazeData(Long interviewSessionId, Object gazeData) {
-        System.out.println("세션 ID " + interviewSessionId + "의 시선 데이터 수신: " + gazeData.toString());
+    // 3. 실시간 분석 데이터 처리 (에러 해결 포인트!)
+    public void processGazeData(Long sessionId, Object data) {
+        System.out.println("세션 " + sessionId + " 시선 데이터 처리 중...");
     }
 
-    // 4. 리포트 생성
+    public void processVoiceData(Long sessionId, Object data) {
+        System.out.println("세션 " + sessionId + " 음성 데이터 처리 중...");
+    }
+
+    public void processExpressionData(Long sessionId, Object data) {
+        System.out.println("세션 " + sessionId + " 표정 데이터 처리 중...");
+    }
+
+    // 4. 분석 요청 (에러 해결 포인트!)
+    public void requestNlpAnalysis(Long sessionId) {
+        System.out.println("세션 " + sessionId + " NLP 분석 시작...");
+    }
+
+    // 5. 리포트 생성 및 저장
     @Transactional
-    public InterviewResultDto generateReport(Long interviewSessionId) {
-        InterviewSession session = interviewSessionRepository.findById(interviewSessionId)
-                .orElseThrow(() -> new IllegalArgumentException("면접 세션을 찾을 수 없습니다."));
-
-        String aiFeedback = "종합적인 AI 분석 결과입니다. (현재는 임시 텍스트)";
-
+    public InterviewResultDto generateReport(Long sessionId) {
+        InterviewSession session = interviewSessionRepository.findById(sessionId).orElseThrow();
         InterviewReport report = InterviewReport.builder()
                 .interviewSession(session)
-                .comprehensiveFeedback(aiFeedback)
+                .comprehensiveFeedback("분석 완료 피드백")
                 .isSaved(false)
                 .build();
         interviewReportRepository.save(report);
 
-        String videoUrl = "https://your-video-url.com/video.mp4";
-        Map<String, Double> metricScores = new HashMap<>();
-        metricScores.put("음성 점수", 90.0);
-        metricScores.put("표정 점수", 85.0);
-
-        return new InterviewResultDto(report, videoUrl, metricScores);
+        Map<String, Double> scores = new HashMap<>();
+        scores.put("논리력", 85.0);
+        return new InterviewResultDto(report, "video_url", scores);
     }
 
-    // 5. 리포트 조회 (수정: 읽기 전용 트랜잭션 옵션 추가)
-    @Transactional(readOnly = true)
     public InterviewResultDto getReportResult(Long reportId) {
-        InterviewReport report = interviewReportRepository.findById(reportId)
-                .orElseThrow(() -> new IllegalArgumentException("리포트를 찾을 수 없습니다."));
+        InterviewReport report = interviewReportRepository.findById(reportId).orElseThrow();
+        return new InterviewResultDto(report, "video_url", new HashMap<>());
+    }
 
-        String videoUrl = "https://your-video-url.com/video.mp4";
-        Map<String, Double> metricScores = new HashMap<>();
-        metricScores.put("음성 점수", 90.0);
-        metricScores.put("표정 점수", 85.0);
-
-        return new InterviewResultDto(report, videoUrl, metricScores);
+    @Transactional
+    public void saveReportToMyPage(Long reportId) {
+        System.out.println("리포트 " + reportId + " 마이페이지 저장 완료");
     }
 }

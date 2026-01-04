@@ -5,14 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-@NoArgsConstructor // <- 기본 생성자를 만들어주는 Lombok 어노테이션
+@NoArgsConstructor
 public class InterviewQuestionDto {
+    private Long sessionId;  // 추가됨
     private Long questionId;
     private String category;
     private String content;
 
-    // PracticeQuestion 엔티티를 받아서 DTO를 만드는 생성자
-    public InterviewQuestionDto(PracticeQuestion question) {
+    // 생성자 수정: sessionId를 추가로 받음
+    public InterviewQuestionDto(Long sessionId, PracticeQuestion question) {
+        this.sessionId = sessionId;
         this.questionId = question.getId();
         this.category = question.getCategory();
         this.content = question.getContent();

@@ -90,7 +90,7 @@ src/main/java/com/example/interviewhelper/
 
 3. **애플리케이션 실행:
     ```bash
-    ./gradlewbootRun
+    ./gradlew bootRun
     ```
 
 ## 5. 기여 방법
